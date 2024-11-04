@@ -1,12 +1,9 @@
 from typing import Any, Optional
 
 from src.common import dtos
-from src.common.converters import (
-    convert_user_model_to_delete_user_dto,
-    convert_user_model_to_dto,
-)
 from src.common.exceptions import ConflictError, NotFoundError
 from src.common.interfaces.hasher import AbstractHasher
+from src.database.converter import from_model_to_dto
 from src.database.repositories.user import UserRepository
 from src.services.service import Service
 
@@ -29,7 +26,7 @@ class UserService(Service[UserRepository]):
         if not result:
             raise NotFoundError("Not Found")
 
-        return convert_user_model_to_dto(result)
+        return from_model_to_dto(result, dtos.User)
 
     async def create_user(
         self, query: dtos.CreateUser, hasher: AbstractHasher
@@ -40,7 +37,7 @@ class UserService(Service[UserRepository]):
         if not result:
             raise ConflictError("This user already exists")
 
-        return convert_user_model_to_dto(result)
+        return from_model_to_dto(result, dtos.User)
 
     async def delete_user(
         self,
@@ -52,7 +49,7 @@ class UserService(Service[UserRepository]):
         if not result:
             raise NotFoundError("Not Found")
 
-        return convert_user_model_to_delete_user_dto(result)
+        return from_model_to_dto(result, dtos.DeleteUser)
 
     async def update_user(
         self,
@@ -66,4 +63,4 @@ class UserService(Service[UserRepository]):
         if not result:
             raise NotFoundError("Not Found")
 
-        return convert_user_model_to_dto(result)
+        return from_model_to_dto(result, dtos.User)
