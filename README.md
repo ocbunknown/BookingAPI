@@ -2,29 +2,64 @@
 
  Simple CRUD Web API that follows CQRS and Mediator patterns.
 
-![List of endpoints](./images/openapi.png)
+![List of endpoints](./images/swagger.png)
 
 ## Endpoints
 
-#### GET /healthcheck/
+#### GET /healthcheck
 ```bash
-curl -X "GET" "http://localhost:5000/api/healthcheck/"
+curl -X 'GET' \
+  'http://0.0.0.0:8000/api/v1/healthcheck' \
+  -H 'accept: application/json'
 ```
 ```json
 {"status": "ok"}
 ```
 
-#### POST /api/v1/users/
+#### POST /api/v1/users
 
 ```bash
 curl -X 'POST' \
-  'http://0.0.0.0:5000/api/v1/users/' \
+  'http://0.0.0.0:8000/api/v1/users' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
   "email": "mymail@gmail.com",
   "phone": "+0000000",
-  "hashed_password": "strongpassword"
+  "password": "strongpassword"
+}'
+```
+```json
+{
+  "id": 1,
+  "email": "mymail@gmail.com",
+  "phone": "+0000000"
+}
+```
+
+#### GET api/v1/users
+```bash
+curl -X 'GET' \
+  'http://0.0.0.0:8000/api/v1/users?email=mymail%40gmail.com' \
+  -H 'accept: application/json'
+```
+```json
+{
+  "id": 1,
+  "email": "mymail@gmail.com",
+  "phone": "+0000000",
+}
+```
+
+#### UPDATE api/v1/users
+```bash
+curl -X 'PATCH' \
+  'http://0.0.0.0:8000/api/v1/users' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "email": "mymail@gmail.com",
+  "password": "newpassword"
 }'
 ```
 ```json
@@ -32,27 +67,14 @@ curl -X 'POST' \
   "id": 1,
   "email": "mymail@gmail.com",
   "phone": "+0000000",
-  "hashed_password": "$2b$12$h/bkjN5WRJiBO6tTr/Ju1uDEiREZ0eBVb4e4EF8sIUSLkTN.WDCuC"
 }
 ```
 
-#### GET api/v1/users/
-```bash
-curl -X "GET" "http://0.0.0.0:5000/api/v1/users/1"
-```
-```json
-{
-  "id": 1,
-  "email": "mymail@gmail.com",
-  "phone": "+0000000",
-  "hashed_password": "$2b$12$h/bkjN5WRJiBO6tTr/Ju1uDEiREZ0eBVb4e4EF8sIUSLkTN.WDCuC"
-}
-```
 
-#### DELETE api/v1/users/
+#### DELETE api/v1/users
 ```bash
 curl -X 'DELETE' \
-  'http://0.0.0.0:5000/api/v1/users/1' \
+  'http://0.0.0.0:8000/api/v1/users?email=mymail%40gmail.com' \
   -H 'accept: application/json'
 ```
 ```json
@@ -80,4 +102,3 @@ curl -X 'DELETE' \
 ### TODO
 
 - [ ] Write tests
-- [X] Add Exception handlers
