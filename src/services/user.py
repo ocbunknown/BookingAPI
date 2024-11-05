@@ -5,6 +5,7 @@ from src.common.exceptions import ConflictError, NotFoundError
 from src.common.interfaces.hasher import AbstractHasher
 from src.database.converter import from_model_to_dto
 from src.database.repositories.user import UserRepository
+from src.database.tools import on_integrity
 from src.services.service import Service
 
 
@@ -28,6 +29,7 @@ class UserService(Service[UserRepository]):
 
         return from_model_to_dto(result, dtos.User)
 
+    @on_integrity("email", "phone")
     async def create(self, query: dtos.CreateUser, hasher: AbstractHasher) -> dtos.User:
         query.password = hasher.hash_password(query.password)
         result = await self.writer.create(query)
