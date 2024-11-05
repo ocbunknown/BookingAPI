@@ -36,7 +36,6 @@ docker_dev_rebuild: ## Run Docker container
 docker_dev_down: ## Run Docker container
 	docker compose -f docker-compose.dev.yml down
 
-
 .PHONY: docker_down
 docker_down: ## Stop Docker container
 	docker compose down

@@ -18,7 +18,7 @@ services:
       - .env
     command: /bin/sh -c 'alembic upgrade head && python -m src'
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsSL http://localhost:8000/api/v1/healthcheck/"]
+      test: ["CMD-SHELL", "curl -fsSL http://localhost:8000/api/v1/healthcheck"]
       interval: 10s
       timeout: 60s
       retries: 5
@@ -34,10 +34,12 @@ services:
     networks:
       - interconnect
       - postgres.network
+    env_file:
+      - "./.env"
     environment:
-      POSTGRES_PASSWORD:  ${POSTGRES_PASSWORD-$USER}
-      POSTGRES_USER: ${POSTGRES_USER:-$USER}
-      POSTGRES_DB: ${POSTGRES_DB:-$USER}
+      POSTGRES_USER: ${DB_USER:-$USER}
+      POSTGRES_DB: ${DB_NAME:-$USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres.data:/var/lib/postgresql/users:rw
     healthcheck:

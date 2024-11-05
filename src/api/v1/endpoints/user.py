@@ -18,9 +18,7 @@ async def create_user_endpoint(
     body: dtos.CreateUser,
     mediator: Annotated[MediatorProtocol, Depends()],
 ) -> OkResponse[dtos.User]:
-    return OkResponse(
-        await mediator.send(body),
-    )
+    return OkResponse(await mediator.send(body))
 
 
 @user_router.get(
@@ -32,9 +30,7 @@ async def get_user_by_id_endpoint(
     query: Annotated[dtos.SelectUser, Depends(dtos.SelectUser)],
     mediator: Annotated[MediatorProtocol, Depends()],
 ) -> OkResponse[dtos.User]:
-    return OkResponse(
-        await mediator.send(query),
-    )
+    return OkResponse(await mediator.send(query))
 
 
 @user_router.delete(
@@ -46,9 +42,7 @@ async def delete_user_endpoint(
     query: Annotated[dtos.DeleteUser, Depends(dtos.DeleteUser)],
     mediator: Annotated[MediatorProtocol, Depends()],
 ) -> OkResponse[dtos.User]:
-    return OkResponse(
-        await mediator.send(query),
-    )
+    return OkResponse(await mediator.send(query))
 
 
 @user_router.patch(
