@@ -18,7 +18,7 @@ nest-asyncio = "^1.6.0"
 orjson = "^3.9.15"
 passlib = "^1.7.4"
 gunicorn = "^21.2.0"
-types-passlib = "^1.7.7.20240311"
+types-passlib = "^1.7.7.20240819"
 httpx = "^0.27.0"
 uuid6 = "^2024.1.12"
 
