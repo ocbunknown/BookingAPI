@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
 
+from sqlalchemy import ColumnExpressionArgument
+
 from src.database import models
+from src.database.exceptions import InvalidParamsError
 from src.database.repositories.base import BaseInteractor
 
 if TYPE_CHECKING:
@@ -17,13 +20,27 @@ class UserWriter(BaseInteractor[models.User]):
 
     async def update(
         self,
-        query: dtos.UpdatePartial,
+        data: dtos.UpdateUser,
+        user_id: Optional[int] = None,
+        email: Optional[str] = None,
+        phone: Optional[str] = None,
     ) -> Optional[models.User]:
+        if not any([user_id, email, phone]):
+            raise InvalidParamsError("at least one identifier must be provided")
+
+        where_clauses: list[ColumnExpressionArgument[bool]] = []
+
+        if user_id:
+            where_clauses.append(self.repository.model.id == user_id)
+        if email:
+            where_clauses.append(self.repository.model.email == email)
+        if phone:
+            where_clauses.append(self.repository.model.phone == phone)
+
         result = await self.repository._crud.update(
-            self.repository.model.id == query.id,
-            **query.model_dump(exclude_none=True),
+            *where_clauses, **data.model_dump(exclude_none=True)
         )
-        return result[0] if result else None
+        return result[0] or None
 
     async def delete(
         self,
@@ -31,17 +48,17 @@ class UserWriter(BaseInteractor[models.User]):
         email: Optional[str] = None,
         phone: Optional[str] = None,
     ) -> Optional[models.User]:
-        if user_id:
-            result = await self.repository._crud.delete(
-                self.repository.model.id == user_id
-            )
-        elif email:
-            result = await self.repository._crud.delete(
-                self.repository.model.email == email
-            )
-        else:
-            result = await self.repository._crud.delete(
-                self.repository.model.phone == phone
-            )
+        if not any([user_id, email, phone]):
+            raise InvalidParamsError("at least one identifier must be provided")
 
-        return result[0] if result else None
+        where_clauses: list[ColumnExpressionArgument[bool]] = []
+
+        if user_id:
+            where_clauses.append(self.repository.model.id == user_id)
+        if email:
+            where_clauses.append(self.repository.model.email == email)
+        if phone:
+            where_clauses.append(self.repository.model.phone == phone)
+
+        result = await self.repository._crud.delete(*where_clauses)
+        return result[0] or None

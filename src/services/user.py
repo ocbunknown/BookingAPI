@@ -16,7 +16,7 @@ class UserService(Service[UserRepository]):
         self.reader = repository.reader()
         self.writer = repository.writer()
 
-    async def select_user(
+    async def select(
         self,
         user_id: Optional[int] = None,
         email: Optional[str] = None,
@@ -28,9 +28,7 @@ class UserService(Service[UserRepository]):
 
         return from_model_to_dto(result, dtos.User)
 
-    async def create_user(
-        self, query: dtos.CreateUser, hasher: AbstractHasher
-    ) -> dtos.User:
+    async def create(self, query: dtos.CreateUser, hasher: AbstractHasher) -> dtos.User:
         query.password = hasher.hash_password(query.password)
         result = await self.writer.create(query)
 
@@ -39,28 +37,33 @@ class UserService(Service[UserRepository]):
 
         return from_model_to_dto(result, dtos.User)
 
-    async def delete_user(
+    async def delete(
         self,
         user_id: Optional[int] = None,
         email: Optional[str] = None,
         phone: Optional[str] = None,
-    ) -> dtos.DeleteUser:
+    ) -> dtos.User:
         result = await self.writer.delete(user_id, email, phone)
         if not result:
-            raise NotFoundError("Not Found")
+            raise ConflictError("Cannot delete user")
 
-        return from_model_to_dto(result, dtos.DeleteUser)
+        return from_model_to_dto(result, dtos.User)
 
-    async def update_user(
+    async def update(
         self,
-        query: dtos.UpdatePartial,
         hasher: AbstractHasher,
+        data: dtos.UpdateUserQuery,
     ) -> dtos.User:
-        if query.password:
-            query.password = hasher.hash_password(query.password)
+        if data.password:
+            data.password = hasher.hash_password(data.password)
 
-        result = await self.writer.update(**query.model_dump())
+        result = await self.writer.update(
+            user_id=data.user_id,
+            email=data.email,
+            phone=data.phone,
+            data=dtos.UpdateUser(**data.model_dump()),
+        )
         if not result:
-            raise NotFoundError("Not Found")
+            raise ConflictError("Cannot update user")
 
         return from_model_to_dto(result, dtos.User)

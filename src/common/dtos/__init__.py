@@ -1,9 +1,17 @@
 from src.common.dtos.user import (
     CreateUser,
     DeleteUser,
-    UpdatePartial,
+    SelectUser,
     UpdateUser,
+    UpdateUserQuery,
     User,
 )
 
-__all__ = ("User", "DeleteUser", "CreateUser", "UpdateUser", "UpdatePartial")
+__all__ = (
+    "User",
+    "DeleteUser",
+    "CreateUser",
+    "UpdateUser",
+    "UpdateUserQuery",
+    "SelectUser",
+)

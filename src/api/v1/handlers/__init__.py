@@ -1,6 +1,7 @@
 import inspect
 from typing import Any, Callable, Optional, Union
 
+from src.common import dtos
 from src.common.interfaces.handler import Handler
 
 from . import commands, queries
@@ -8,10 +9,10 @@ from .mediator import MediatorImpl
 
 
 def setup_mediator(mediator: MediatorImpl, **kw: Any) -> None:
-    mediator.register(queries.GetUser, queries.GetUserHandler)
-    mediator.register(commands.CreateUser, commands.CreateUserHandler)
-    mediator.register(commands.DeleteUser, commands.DeleteUserHandler)
-    mediator.register(commands.UpdateUser, commands.UpdateUserHandler)
+    mediator.register(dtos.SelectUser, queries.GetUserHandler)
+    mediator.register(dtos.CreateUser, commands.CreateUserHandler)
+    mediator.register(dtos.DeleteUser, commands.DeleteUserHandler)
+    mediator.register(dtos.UpdateUserQuery, commands.UpdateUserHandler)
 
     register_dependencies(mediator, **kw)
 

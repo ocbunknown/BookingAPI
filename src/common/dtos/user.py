@@ -9,11 +9,17 @@ class User(DTO):
     phone: str
 
 
-
 class CreateUser(DTO):
     email: Optional[str] = None
     phone: str
     password: str
+
+
+class UpdateUserQuery(DTO):
+    user_id: Optional[int] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    password: Optional[str] = None
 
 
 class UpdateUser(DTO):
@@ -22,14 +28,11 @@ class UpdateUser(DTO):
     password: Optional[str] = None
 
 
+class SelectUser(UpdateUserQuery):
+    pass
+
+
 class DeleteUser(DTO):
-    id: int
-    email: Optional[str] = None
-    phone: str
-
-
-class UpdatePartial(DTO):
-    id: int
+    user_id: Optional[int] = None
     email: Optional[str] = None
     phone: Optional[str] = None
-    password: Optional[str] = None

@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from typing import Optional, Sequence
 
+from sqlalchemy import ColumnExpressionArgument
+
 from src.database import models
+from src.database.exceptions import InvalidParamsError
 from src.database.repositories.base import BaseInteractor
 
 
@@ -15,25 +18,43 @@ class UserReader(BaseInteractor[models.User]):
         email: Optional[str] = None,
         phone: Optional[str] = None,
     ) -> Optional[models.User]:
-        if user_id:
-            result = await self.repository._crud.select(
-                self.repository.model.id == user_id
-            )
-        if email:
-            result = await self.repository._crud.select(
-                self.repository.model.email == email
-            )
-        if phone:
-            result = await self.repository._crud.select(
-                self.repository.model.phone == phone
-            )
+        if not any([user_id, email, phone]):
+            raise InvalidParamsError("at least one identifier must be provided")
 
-        return result if result else None
+        where_clauses: list[ColumnExpressionArgument[bool]] = []
+
+        if user_id:
+            where_clauses.append(self.repository.model.id == user_id)
+        if email:
+            where_clauses.append(self.repository.model.email == email)
+        if phone:
+            where_clauses.append(self.repository.model.phone == phone)
+
+        return await self.repository._crud.select(*where_clauses)
 
     async def select_many(
-        self, limit: Optional[int] = None, offset: Optional[int] = None
+        self,
+        user_id: Optional[int] = None,
+        email: Optional[str] = None,
+        phone: Optional[str] = None,
+        limit: Optional[int] = 20,
+        offset: Optional[int] = 0,
     ) -> Sequence[models.User]:
-        return await self.repository._crud.select_many(limit=limit, offset=offset)
+        if not any([user_id, email, phone]):
+            raise InvalidParamsError("at least one identifier must be provided")
+
+        where_clauses: list[ColumnExpressionArgument[bool]] = []
+
+        if user_id:
+            where_clauses.append(self.repository.model.id == user_id)
+        if email:
+            where_clauses.append(self.repository.model.email == email)
+        if phone:
+            where_clauses.append(self.repository.model.phone == phone)
+
+        return await self.repository._crud.select_many(
+            **where_clauses, limit=limit, offset=offset
+        )
 
     async def exists(self, user_id: int) -> bool:
         return await self.repository._crud.exists(self.repository.model.id == user_id)

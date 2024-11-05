@@ -1,6 +1,3 @@
-from .select_user import GetUser, GetUserHandler
+from .select_user import GetUserHandler
 
-__all__ = (
-    "GetUserHandler",
-    "GetUser",
-)
+__all__ = ("GetUserHandler",)

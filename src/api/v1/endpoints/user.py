@@ -3,12 +3,6 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
 from src.api.common.responses import OkResponse
-from src.api.v1.handlers.commands import (
-    CreateUser,
-    DeleteUser,
-    UpdateUser,
-)
-from src.api.v1.handlers.queries import GetUser
 from src.common import dtos
 from src.common.interfaces.mediator import MediatorProtocol
 
@@ -21,8 +15,8 @@ user_router = APIRouter(prefix="/users", tags=["User"])
     response_model=dtos.User,
 )
 async def create_user_endpoint(
+    body: dtos.CreateUser,
     mediator: Annotated[MediatorProtocol, Depends()],
-    body: CreateUser,
 ) -> OkResponse[dtos.User]:
     return OkResponse(
         await mediator.send(body),
@@ -30,41 +24,40 @@ async def create_user_endpoint(
 
 
 @user_router.get(
-    "/{user_id}",
+    "",
     status_code=status.HTTP_200_OK,
     response_model=dtos.User,
 )
 async def get_user_by_id_endpoint(
+    query: Annotated[dtos.SelectUser, Depends(dtos.SelectUser)],
     mediator: Annotated[MediatorProtocol, Depends()],
-    user_id: int,
 ) -> OkResponse[dtos.User]:
     return OkResponse(
-        await mediator.send(GetUser(user_id=user_id)),
+        await mediator.send(query),
     )
 
 
 @user_router.delete(
-    "/{user_id}",
+    "",
     status_code=status.HTTP_200_OK,
-    response_model=dtos.DeleteUser,
+    response_model=dtos.User,
 )
 async def delete_user_endpoint(
+    query: Annotated[dtos.DeleteUser, Depends(dtos.DeleteUser)],
     mediator: Annotated[MediatorProtocol, Depends()],
-    user_id: int,
-) -> OkResponse[dtos.DeleteUser]:
+) -> OkResponse[dtos.User]:
     return OkResponse(
-        await mediator.send(DeleteUser(user_id=user_id)),
+        await mediator.send(query),
     )
 
 
 @user_router.patch(
-    "/{user_id}",
+    "",
     status_code=status.HTTP_200_OK,
     response_model=dtos.User,
 )
 async def update_user_endpoint(
+    body: dtos.UpdateUserQuery,
     mediator: Annotated[MediatorProtocol, Depends()],
-    user_id: int,
-    body: dtos.UpdateUser,
 ) -> OkResponse[dtos.User]:
-    return OkResponse(await mediator.send(UpdateUser(id=user_id, **body.model_dump())))
+    return OkResponse(await mediator.send(body))
