@@ -40,7 +40,7 @@ class UserWriter(BaseInteractor[models.User]):
         result = await self.repository._crud.update(
             *where_clauses, **data.model_dump(exclude_none=True)
         )
-        return result[0] or None
+        return result[0] if result else None
 
     async def delete(
         self,
@@ -61,4 +61,4 @@ class UserWriter(BaseInteractor[models.User]):
             where_clauses.append(self.repository.model.phone == phone)
 
         result = await self.repository._crud.delete(*where_clauses)
-        return result[0] or None
+        return result[0] if result else None

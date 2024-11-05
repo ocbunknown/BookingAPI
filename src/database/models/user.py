@@ -8,6 +8,6 @@ from src.database.models.base.mixins import ModelWithIDMixin
 
 
 class User(ModelWithIDMixin, Base):
-    phone: Mapped[str] = mapped_column(String, nullable=False, unique=True)
-    email: Mapped[Optional[str]] = mapped_column(String, unique=True, nullable=True)
+    phone: Mapped[str] = mapped_column(String, nullable=False, index=True, unique=True)
+    email: Mapped[Optional[str]] = mapped_column(String, index=True, unique=True, nullable=True)
     password: Mapped[str] = mapped_column(String, nullable=False)

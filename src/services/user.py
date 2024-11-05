@@ -25,7 +25,7 @@ class UserService(Service[UserRepository]):
     ) -> dtos.User:
         result = await self.reader.select(user_id, email, phone)
         if not result:
-            raise NotFoundError("Not Found")
+            raise NotFoundError("User not found")
 
         return from_model_to_dto(result, dtos.User)
 

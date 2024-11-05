@@ -28,11 +28,11 @@ class UpdateUser(DTO):
     password: Optional[str] = None
 
 
-class SelectUser(UpdateUserQuery):
-    pass
-
-
 class DeleteUser(DTO):
     user_id: Optional[int] = None
     email: Optional[str] = None
     phone: Optional[str] = None
+
+
+class SelectUser(DeleteUser):
+    pass

@@ -16,5 +16,5 @@ class CreateUserHandler(BaseHandler[dtos.CreateUser, dtos.User]):
     async def handle(self, query: dtos.CreateUser, **kwargs: Any) -> dtos.User:
         async with self._gateway:
             return await self._gateway.user().create(
-                **query.model_dump(), hasher=self.hasher, **kwargs
+                query=query, hasher=self.hasher, **kwargs
             )
